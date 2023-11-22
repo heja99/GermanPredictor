@@ -30,7 +30,20 @@ server_module1 <- function(input, output, session) {
     
     vars_length <- length(ind_vars)
     
-    if (vars_length >0) {
+    
+    # Logic to catch error if dependent and independent variables are the same
+    if(sum(dep_var == ind_vars)>0)
+    {
+      equal_error = TRUE
+    }
+    else
+    {
+      equal_error = FALSE
+    }
+    
+    
+    
+    if (vars_length >0 && !equal_error ) {
       # Filter out any missing values in the selected variables
       filtered_df <- df[complete.cases(df[, c(dep_var, ind_vars)]), ]
       train_ind = createDataPartition(filtered_df[,1],p=.75,list=FALSE)
@@ -59,13 +72,15 @@ server_module1 <- function(input, output, session) {
         vars_length = vars_length,
         MAE_lin = (mean(abs(testing[,column_name]-predicitons))),
         indep_variables = ind_vars,
-        depend_variable = dep_var
+        depend_variable = dep_var,
+        equal_error = equal_error
       )
     } else {
       list(
         summary = "Choose exactly one independent variable for plotting.",
         plot_data = NULL,
         vars_length = vars_length,
+        equal_error = equal_error
         
       )
     }
@@ -73,24 +88,33 @@ server_module1 <- function(input, output, session) {
   
   # Display summary
   output$summary <- renderPrint({
-    cat(output_data()$summary, sep = "\n")
+    equal_error = output_data()$equal_error
+    if( equal_error == TRUE)
+    {
+      print("No Summary available")
+    }
+    else
+    {
+      cat(output_data()$summary, sep = "\n")
+    }
+    
   })
   
   # Create scatter plot with regression line
   output$scatter_plot <- renderPlot({
     plot_data <- output_data()$plot_data
     vars_length <- output_data()$vars_length
+    equal_error = output_data()$equal_error
     
-    # Debug prints
-    print(output_data()$indep_variables)
-    myvec = (output_data()$indep_variables)
-    myvec2 = output_data()$depend_variable
-    print(myvec == myvec2)
-    print(typeof(myvec))
-    if (vars_length == 1) {
+    if (vars_length == 1 && equal_error==FALSE) {
       plot(unlist(plot_data$x), plot_data$y, xlab = "Independent Variable", ylab = "Dependent Variable", main = "Scatter plot with Regression Line")
       abline(plot_data$lm_model, col = "red")
     } 
+    else if( equal_error == TRUE)
+    {
+      plot(NULL, xlim = c(0, 1), ylim = c(0, 1), xlab = "Independent Variable", ylab = "Dependent Variable", main = "Scatter plot with Regression Line")
+      text(0.5, 0.5, "No plot generated. Dependent and Independent Variables are the same", cex = 1.2)
+    }
     else {
       plot(NULL, xlim = c(0, 1), ylim = c(0, 1), xlab = "Independent Variable", ylab = "Dependent Variable", main = "Scatter plot with Regression Line")
       text(0.5, 0.5, "No plot generated. To many dimensions", cex = 1.2)
@@ -98,15 +122,31 @@ server_module1 <- function(input, output, session) {
   })
   
   output$MAE <- renderPrint({
-    print(paste0("The Mean Absolute Error is: ", output_data()$MAE_lin))
+    equal_error = output_data()$equal_error
+    if( equal_error == TRUE)
+    {
+      print("No MAE calculated")
+    }
+    else
+    {
+      print(paste0("The Mean Absolute Error is: ", output_data()$MAE_lin))
+    }
+ 
   })
   
   output$my_table <- renderTable({
+    equal_error = output_data()$equal_error
+    if( equal_error == TRUE)
+    {
+      data <- data.frame(c(0,0,0), c(0,0,0))
+    }
     # Creating a sample data frame for demonstration
-    data <- data.frame(
+    else
+      {data <- data.frame(
       Predicted_Values = output_data()$my_examples_pred,
       True_Values = output_data()$my_examples_true
-    )
+      )
+      }
     data  # Returning the data frame to render as a table
   })
 }

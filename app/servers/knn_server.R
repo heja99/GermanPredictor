@@ -29,7 +29,16 @@ server_module2 <- function(input, output, session) {
     
     vars_length <- length(ind_vars)
     
-    if (vars_length > 0) {
+    if(sum(dep_var == ind_vars)>0)
+    {
+      equal_error = TRUE
+    }
+    else
+    {
+      equal_error = FALSE
+    }
+    
+    if (vars_length && !equal_error) {
       # Filter out any missing values in the selected variables
       filtered_df <- df[complete.cases(df[, c(dep_var, ind_vars)]), ]
       train_ind <- createDataPartition(filtered_df[, 1], p = 0.75, list = FALSE)
@@ -55,19 +64,30 @@ server_module2 <- function(input, output, session) {
         vars_length = vars_length,
         MAE_KNN = MAE_KNN,
         my_examples_pred = my_examples_pred,
-        my_examples_true = my_examples_true
+        my_examples_true = my_examples_true,
+        equal_error = equal_error
       )
     } else {
       list(
         plot_data = NULL,
-        vars_length = vars_length
+        vars_length = vars_length,
+        equal_error = equal_error
       )
     }
   })
   
   # Display summary
   output$summary_knn <- renderPrint({
-    print(output_data_knn()$knn_model_cv)
+    equal_error = output_data_knn()$equal_error
+    if( equal_error == TRUE)
+    {
+      print("No Summary available")
+    }
+    else
+    {
+      print(output_data_knn()$knn_model_cv)
+    }
+
   })
   
   # Create scatter plot for KNN
@@ -75,10 +95,17 @@ server_module2 <- function(input, output, session) {
     plot_data <- output_data_knn()$plot_data
     vars_length <- output_data_knn()$vars_length
     knn_model <- output_data_knn()$knn_model_cv
-    if (vars_length > 0) {
+    equal_error = output_data_knn()$equal_error
+    if (vars_length > 0 && !equal_error) {
       plot(knn_model)
     } 
-    else {
+    else if( equal_error == TRUE)
+    {
+      plot(NULL, xlim = c(0, 1), ylim = c(0, 1), xlab = "Independent Variable", ylab = "Dependent Variable", main = "Scatter plot with Regression Line")
+      text(0.5, 0.5, "No plot generated. Dependent and Independent Variables are the same", cex = 1.2)
+    }
+    else 
+    {
       plot(NULL, xlim = c(0, 1), ylim = c(0, 1), xlab = "Independent Variable", ylab = "Dependent Variable", main = "Scatter plot with KNN Regression")
       text(0.5, 0.5, "No plot generated. Either too many dimensions or KNN model is NULL", cex = 1.2)
     }
@@ -86,15 +113,33 @@ server_module2 <- function(input, output, session) {
   
   # Display MAE for KNN
   output$MAE_knn <- renderPrint({
-    print(paste0("Mean Absolute Error for KNN is: ", output_data_knn()$MAE_KNN))
+    equal_error = output_data_knn()$equal_error
+    if( equal_error == TRUE)
+    {
+      print("No MAE calculated")
+    }
+    else
+    {
+      print(paste0("The Mean Absolute Error is: ", output_data_knn()$MAE_KNN))
+    }
+    
   })
   
   output$my_table_knn <- renderTable({
+    equal_error = output_data_knn()$equal_error
+    if( equal_error == TRUE)
+    {
+      data <- data.frame(c(0,0,0), c(0,0,0))
+    }
+    # Creating a sample data frame for demonstration
+    else
+    {
     # Creating a sample data frame for demonstration
     data <- data.frame(
       Predicted_Values = output_data_knn()$my_examples_pred,
       True_Values = output_data_knn()$my_examples_true
     )
+    }
     data  # Returning the data frame to render as a table
   })
 }
