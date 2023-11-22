@@ -1,9 +1,15 @@
+# views/home_page.R
+
+# homePageUI function definition
 homePageUI <- function() {
+  # Define the UI for the home page
   fluidPage(
+    # First row
     fluidRow(
       # Welcome Title
-      h1("Welcome to the German Predictor!", class = "welcome-title"),
-      h2("Efficient, Precise and Always on Time.", class = "welcome-subtitle"),
+      h1("Welcome to the German Predictor!", class = "welcome-title"),  # Main title
+      h2("Efficient, Precise and Always on Time.", class = "welcome-subtitle"),  # Subtitle
+      
       # Three infoboxes
       infoBox(
         "Information about car models.",
@@ -25,10 +31,14 @@ homePageUI <- function() {
         icon = icon("wind"),
         fill = TRUE,
         color = "purple",
-      )    ),
+      )
+    ),
+    
+    # Second row
     fluidRow(
       # Info box
-      div(class = "explanation-box",
+      div(
+        class = "explanation-box",
         box(
           title = "App Description",
           width = NULL,
@@ -36,7 +46,10 @@ homePageUI <- function() {
         )
       )
     ),
+    
+    # Third row
     fluidRow(
+      # Three columns with boxes
       column(width = 4,
              box(
                title = "Exploratory Data Analysis (EDA)",
@@ -44,7 +57,7 @@ homePageUI <- function() {
                "Investigate the data you use for predictions.",
                status = "primary",
                solidHeader = TRUE,
-               img(src = "EDA.png", width = "100%")
+               img(src = "EDA.png", width = "100%")  # Image for EDA
              )
       ),
       column(width = 4,
@@ -54,7 +67,7 @@ homePageUI <- function() {
                "Linear approach for predictions.",
                status = "primary",
                solidHeader = TRUE,
-               img(src = "Linear_Regression.png", width = "100%")
+               img(src = "Linear_Regression.png", width = "100%")  # Image for Linear Regression
              )
       ),
       column(width = 4,
@@ -64,7 +77,7 @@ homePageUI <- function() {
                "Non-linear approach for predictions.",
                status = "primary",
                solidHeader = TRUE,
-               img(src = "KNN.png", width = "100%")
+               img(src = "KNN.png", width = "100%")  # Image for KNN
              )
       )
     )

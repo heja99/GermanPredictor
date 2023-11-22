@@ -7,17 +7,18 @@ dataframes_list_2 <- list(
   "airquality" = airquality
 )
 
-# Define the UI
+# Define the UI for the Linear Regression page
 ui <- fluidPage(
   h1(tags$span(icon("timeline"), "Linear Regression"), class = "titlePanel"),
   
+  # First row with an explanation box
   fluidRow(
-    # Info box
-    div(class = "explanation-box",
+    div(
+      class = "explanation-box",
       box(
         title = "How to use this function?",
         width = NULL,
-        "To initiate the desired prediction, you must first select one of the three datasets. Depending on the chosen dataset, the appropriate set of variables will be displayed. From these, you can then select the variable you want to predict (dependent variable) and any number of predictors. Accordingly, in the case of only one predictor, the plot will be displayed, and in any case, a statistical summary of the entire process will be provided. Finally, the Mean Absolute Error (MAE) will be presented, which indicates on average how much our prediction deviates from the actual value.",
+        "To initiate the desired prediction, you must first select one of the three datasets. Depending on the chosen dataset, the appropriate set of variables will be displayed. From these, you can then select the variable you want to predict (dependent variable) and any number of predictors. Accordingly, in the case of only one predictor, the plot will be displayed, and in any case, a statistical summary of the entire process will be provided. Finally, the Mean Absolute Error (MAE) will be presented, which indicates on average how much our prediction deviates from the actual value."
       )
     )
   ),
@@ -25,23 +26,38 @@ ui <- fluidPage(
   # Sidebar layout with input and output definitions
   sidebarLayout(
     box(
-      selectInput("dataframe_2", "Choose a Dataframe", choices = names(dataframes_list)),
+      # Dropdown to choose a dataframe
+      selectInput("dataframe_2", "Choose a Dataframe", choices = names(dataframes_list_2)),
+      
+      # Dynamic UI for selecting the dependent variable
       uiOutput("dependent_var_ui_2"),
+      
+      # Dynamic UI for selecting independent variables
       uiOutput("independent_vars_ui_2"),
+      
+      # Text output for informational messages
       textOutput("message"),
-      width = 3,  # Set the width of the box
+      width = 3,
       style = "background: transparent; padding: 15px;"
     ),
     
+    # Main panel with output elements
     mainPanel(
+      # Scatter plot for Linear Regression
       plotOutput("scatter_plot"),
       br(),
+      
+      # Verbatim text output for statistical summary
       verbatimTextOutput("summary"),
       br(),
+      
+      # Text output for Mean Absolute Error (MAE)
       textOutput("MAE"),
       br(),
+      
+      # Table output
       tableOutput("my_table"),
-      width = 9
+      width = 9 
     )
   )
 )

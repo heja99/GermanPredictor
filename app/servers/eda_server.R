@@ -45,7 +45,6 @@
       text(0.5, 0.5, "Invalid data for histogram", cex = 1.2)
     }
   })
-  
 
   # Update the choices for the numeric variable dropdown based on the selected dataframe
   observe({
