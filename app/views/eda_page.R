@@ -1,5 +1,5 @@
 # views/eda_page.R
-library(DT)
+# library(DT)
 
 # Define a list of built-in dataframes in R
 dataframes_list <- list(
