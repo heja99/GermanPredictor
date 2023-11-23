@@ -112,34 +112,43 @@ server_module2 <- function(input, output, session) {
   })
   
   # Display MAE for KNN
-  output$MAE_knn <- renderPrint({
+  output$MAE_knn <- renderText({
     equal_error = output_data_knn()$equal_error
     if( equal_error == TRUE)
     {
-      print("No MAE calculated")
+      "No MAE calculated"
     }
     else
     {
-      print(paste0("The Mean Absolute Error is: ", output_data_knn()$MAE_KNN))
+      mae_value <- round(output_data_knn()$MAE_KNN, 4)
+      formatted_text <- paste("<span style='font-weight: bold; font-size: 16px;'>Mean Absolute Error for KNN is: ", mae_value, "</span>")
+      formatted_text
     }
     
   })
   
-  output$my_table_knn <- renderTable({
+
+    
+  output$my_table_knn <- renderText({
     equal_error = output_data_knn()$equal_error
     if( equal_error == TRUE)
     {
-      data <- data.frame(c(0,0,0), c(0,0,0))
+      "No table available"
     }
     # Creating a sample data frame for demonstration
     else
-    {
-    # Creating a sample data frame for demonstration
-    data <- data.frame(
-      Predicted_Values = output_data_knn()$my_examples_pred,
-      True_Values = output_data_knn()$my_examples_true
-    )
-    }
-    data  # Returning the data frame to render as a table
+    {# Creating a sample data frame for demonstration
+      data <- data.frame(
+        Predicted_Values = output_data_knn()$my_examples_pred,
+        True_Values = output_data_knn()$my_examples_true
+      )
+      
+      # Create a character vector with the specified format
+      formatted_text <- sapply(1:nrow(data), function(i) {
+        paste("<b>Example", i, "</b> - Actual Value:", data$True_Values[i], "; Predicted Value:", data$Predicted_Values[i], "<br>")
+      }, USE.NAMES = FALSE)
+      
+      # Concatenate the formatted text
+      paste(formatted_text, collapse = "")}
   })
 }

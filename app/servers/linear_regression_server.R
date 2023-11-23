@@ -121,32 +121,39 @@ server_module1 <- function(input, output, session) {
     }
   })
   
-  output$MAE <- renderPrint({
+  output$MAE <- renderText({
     equal_error = output_data()$equal_error
     if( equal_error == TRUE)
     {
-      print("No MAE calculated")
+      "No MAE calculated"
     }
     else
-    {
-      print(paste0("The Mean Absolute Error is: ", output_data()$MAE_lin))
-    }
+    {mae_value <- round(output_data()$MAE_lin, 4)
+    formatted_text <- paste("<span style='font-weight: bold; font-size: 16px;'>The Mean Absolute Error is: ", mae_value, "</span>")
+    formatted_text}
  
   })
   
-  output$my_table <- renderTable({
+  output$my_table <- renderText({
     equal_error = output_data()$equal_error
     if( equal_error == TRUE)
     {
-      data <- data.frame(c(0,0,0), c(0,0,0))
+      "No table available"
     }
     # Creating a sample data frame for demonstration
     else
-      {data <- data.frame(
-      Predicted_Values = output_data()$my_examples_pred,
-      True_Values = output_data()$my_examples_true
+    {# Creating a sample data frame for demonstration
+      data <- data.frame(
+        Predicted_Values = output_data()$my_examples_pred,
+        True_Values = output_data()$my_examples_true
       )
-      }
-    data  # Returning the data frame to render as a table
+      
+      # Create a character vector with the specified format
+      formatted_text <- sapply(1:nrow(data), function(i) {
+        paste("<b>Example", i, "</b> - Actual Value:", data$True_Values[i], "; Predicted Value:", data$Predicted_Values[i], "<br>")
+      }, USE.NAMES = FALSE)
+      
+      # Concatenate the formatted text
+      paste(formatted_text, collapse = "")}
   })
 }

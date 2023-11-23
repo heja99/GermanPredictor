@@ -52,11 +52,11 @@ ui <- fluidPage(
       br(),
       
       # Text output for Mean Absolute Error (MAE)
-      textOutput("MAE"),
+      htmlOutput("MAE"),
       br(),
       
       # Table output
-      tableOutput("my_table"),
+      htmlOutput("my_table"),
       width = 9 
     )
   )

@@ -49,10 +49,10 @@ ui <- fluidPage(
       br(),
       
       # Text output for Mean Absolute Error (MAE)
-      textOutput("MAE_knn"),
+      htmlOutput("MAE_knn"),
       br(),
       # Table output
-      tableOutput("my_table_knn"),
+      htmlOutput("my_table_knn"),
       width = 9
     )
   )
