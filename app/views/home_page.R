@@ -19,9 +19,9 @@ homePageUI <- function() {
         color = "purple",
       ),      
       infoBox(
-        "Measurements of iris flowers.",
-        "Dataset 2: iris",
-        icon = icon("plant-wilt"),
+        "Fertility and socioeconomic indicators.",
+        "Dataset 2: swiss",
+        icon = icon("mountain"),
         fill = TRUE,
         color = "purple",
       ),
